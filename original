@@ -8,6 +8,7 @@
 using namespace std;
 
 const int ROW = 3,  COL = 3;
+string userName;
 void displayMenu();
 void displayFoodMenu();
 void displayDrinkMenu();
@@ -20,8 +21,8 @@ void displayReceipt();
 void createRecipt(const string[][COL], const double[][COL], const int[][COL]);
 void timeStamp();
 void saveDataInFile();
-bool SearchItem(string);
-void AddItem(string , int );
+void identifyUser();
+int DriverFunctionTestResetVaule(int );
 
 ////////////////////////////////////////////
 ///////////////ARRAY FOR ITEM///////////////
@@ -33,8 +34,8 @@ void AddItem(string , int );
 ///////numberOfOrder[2][] is Drink
 ///////numberOfOrder[3][] is gift card
 ///////Base on 3 x 3
-string itemName[ROW][COL]={{ "Bacon Sandwich","Bistro Box","Turkey Burger" },
-                            { "Americano Caffe", "Carmel Macchiato", "Espresso" },
+string itemName[ROW][COL]={{ "Bacon Sandwich","OMG-3 Bistro Box","Turkey Burger" },
+                            { "Americano Caffe", "Carmel Macchiato", "Espresso Con Panna" },
                             { "5 dollar gift card", "10 dollar gift card","15 dollar gift card" }
                             };
  double itemPrice[ROW][COL]={{ 4.5, 5.5, 4.5 },
@@ -48,30 +49,48 @@ static int itemCounter = 0;
 ////////  TAX = 8.5%  ////////////
 //////////////////////////////////
 const double TAX = 0.085;
+void identifyUser()
+{
+  cout << "Please Enter User Name:";
+  cin >> userName;
+}
 
 int main()
 {
+  identifyUser();
 	//variable that User enter
-	int UserInput;
+	//test driver, testing menu options
+    int testDriver = 1;
+    //test data
 
 	double Total = 0.0;
-	int numberWanted;
+	//test driver, testing menu options
+	int numberWantedDriver = 1;
 	/////////////////////////////////////////////////
 	////////////Program start Here//////////////////
 	////////////////////////////////////////////////
 	cout << fixed << setprecision(2) << showpoint;
 	do
 	{
+
 		//////////////////Main menu//////////////////
 		displayMenu();
-		cin >> UserInput;
-		while (UserInput < 0 || UserInput > 5)
+
+
+
+		while (testDriver < 0 || testDriver > 4)
 		{
-			cout << "Sorry choice, please enter option 1~5: ";
-			cin >> UserInput;
+		    cout << testDriver;
+			cout << "Sorry choice, please enter option 1~4: ";
+			testDriver++;
+			if (testDriver >  4)
+		{
+			displayReceipt();
+			return 0;
+		}
 		}
 
-		if (UserInput == 5)
+		if (testDriver == 4)
 		{
 			displayReceipt();
 			return 0;
@@ -80,84 +99,88 @@ int main()
 		//////////Go into Menu 1, 2, or 3///////
 		else
 		{
-			switch (UserInput)
+			switch (testDriver)
 			{
 				/////////////////////Process In the food menu///////////////
 			case 1:
-				do
-				{
+
 					displayFoodMenu();
-					cin >> UserInput;
-					inputValidate(UserInput);
-					switch (UserInput)
+
+
+					switch (testDriver)
 					{
 					case 1:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[0][0] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[0][0];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[0][0] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[0][0];
 						break;
 					case 2:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[0][1] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[0][1];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[0][1] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[0][1];
 						break;
 					case 3:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[0][2] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[0][3];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[0][2] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[0][3];
 						break;
 					case 4:
+					    testDriver = DriverFunctionTestResetVaule(testDriver);
 						break;
 					case 5:
 						displayReceipt();
 						return 0;
 					}
-				} while (UserInput < 4);
+					testDriver++;//contuniens driver test
+
 
 				break;
 				/////////////////////Process In the Drink menu///////////////
 			case 2:
 				do
 				{
+
 					displayDrinkMenu();
-					cin >> UserInput;
-					inputValidate(UserInput);
-					switch (UserInput)
+
+
+					switch (testDriver)
 					{
 					case 1:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[1][0] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[1][0];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[1][0] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[1][0];
 						break;
 					case 2:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[1][1] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[1][1];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[1][1] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[1][1];
 						break;
 					case 3:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[1][2] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[1][2];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[1][2] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[1][2];
 						break;
 					case 4:
+					    testDriver = DriverFunctionTestResetVaule(testDriver);
 						break;
 					case 5:
 						displayReceipt();
 						return 0;
 					}
-				} while (UserInput < 4);
+					testDriver++;
+				} while (testDriver < 4);
 
 				break;
 				/////////////////////Process In the GiftCard menu///////////////
@@ -165,71 +188,52 @@ int main()
 				do
 				{
 					displayGiftCard();
-					cin >> UserInput;
-					inputValidate(UserInput);
-					switch (UserInput)
+
+
+					switch (testDriver)
 					{
 					case 1:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[2][0] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[2][0];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[2][0] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[2][0];
+
 						break;
 					case 2:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[2][1] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[2][1];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[2][1] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[2][1];
+
 						break;
 					case 3:
 						cout << "How many you want: ";
-						cin >> numberWanted;
-						numberWanted = inputQuantityValidate(numberWanted);
-						numberOfOrder[2][2] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[2][2];
+
+						numberWantedDriver = inputQuantityValidate(numberWantedDriver);
+						numberOfOrder[2][2] += numberWantedDriver;
+						commulateTotal += numberWantedDriver * itemPrice[2][2];
 						break;
 					case 4:
+					    testDriver = DriverFunctionTestResetVaule(testDriver);
 						break;
 					case 5:
 						displayReceipt();
 						return 0;
 					}
-				} while (UserInput < 4);
+					testDriver++;//contuniens driver test
+				} while (testDriver < 4);
 
 				break;
-			/////////////////////Display all menu/////////////////////////////
-			case 4:
-			  //Get User input
-        string itemSearch;
-        bool found = false;
-        cout << "Enter the item you want to search: ";
-        cin.ignore();
-        getline(cin, itemSearch);
-			  found = SearchItem(itemSearch);
-			  if(found == false)
-			  {
-			    cout << "Sorry, the item was not found." << endl;
-			    cout << "Enter anything to turn back.";
-			    cin.ignore();
-			    break;
-			  }
-			   else
-			   {
-			     cout << "How many you want: ";
-			     cin >> numberWanted;
-			     numberWanted = inputQuantityValidate(numberWanted);
-			     /////***Add the number to the numberOfOrder****/////
-			     AddItem(itemSearch, numberWanted);
-			   }
-			 
-			///////////////////Otherwise  ////////////////////////////////////
-			
+			default:
+				displayReceipt();
+
+
 			}
 		}
-
-	} while (UserInput != 0);
+    testDriver++;
+	} while (testDriver != 0);
 
 	return 0;
 }
@@ -238,6 +242,14 @@ int main()
 //////////////////////////////////////////////////////////////
 /////////////////////Display Menu Function///////////////////
 ////////////////////////////////////////////////////////////
+
+int DriverFunctionTestResetVaule(int value)
+{
+     value = 0;
+    return value;
+
+}
+
 void displayMenu()
 {
 	ClearScreen();
@@ -248,8 +260,7 @@ void displayMenu()
 	cout << "1.Food" << endl;
 	cout << "2 Drink" << endl;
 	cout << "3.Gift Card" << endl;
-	cout << "4.Search Item" << endl;
-	cout << "5.Done Ordering" << endl;
+	cout << "4.Done Ordering" << endl;
 	cout << "0. Exit" << endl;
 	cout << "choice:";
 }
@@ -297,9 +308,13 @@ int inputValidate(int input)
 {
 	while (input <1 || input >5)
 	{
+	    cout << "Stub" <<input;//stub
 		cout << "Sorry, not that option. Please enter 1~5: ";
 		cin >> input;
+
 	}
+	cout << input;//stub
+
 	return input;
 }
 //////////////////Function that check input quantity, should greater than0
@@ -339,7 +354,7 @@ void createRecipt(const string menu[][COL], const double price[][COL], const int
 void displayReceipt()
 {
 	ClearScreen();
-	cout << "Casher: John Smith " << "\t\t";
+	cout << userName<< "\t\t";
 	timeStamp();
 	cout << setw(20) << left << "ITEM" << "                 " << "QTY" << "\t\t\tPRICE" << endl;
 	cout << "------------------------------------------------------------------------" << endl;
@@ -381,7 +396,7 @@ void saveDataInFile()
 	char* dt = ctime(&now);
 	ofstream outputFile;
 	outputFile.open("Data.txt");
-	outputFile << "Casher: John Smith " << "\t\t";
+	outputFile << userName << "\t\t";
 	outputFile << dt << endl;
 	outputFile << "ITEM"<< setw(30)<<" \t\t\tquantity" << endl;
 	outputFile << "------------------------------------------------------" << endl;
@@ -402,93 +417,4 @@ void saveDataInFile()
 	outputFile.open("Data.txt");
 
 	outputFile.close();
-}
-
-/////////////Function display all menu
-bool SearchItem(string item)
-{
-////////////////////////////////////////////////////////////////
-///Add vector to save all item and it price for sort using
-  vector<string> ALLITEM;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLITEM.push_back(itemName[row][col]);
-  vector<double> ALLPRICE;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLPRICE.push_back(itemPrice[row][col]);
-//End
-//////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////
-//sort ALLITEM and ALLPRICE in accending way
-  int startIt, minIndex;
-  string minValue;
-  double temPr;
-  for(startIt=0; startIt<(ALLITEM.size()-1); startIt++)
-  {
-    minIndex = startIt;
-    minValue = ALLITEM[startIt];
-    for(int index=startIt+1; index<(ALLITEM.size()); index++)
-    {
-      if(ALLITEM[index]<minValue)
-      {
-        minValue = ALLITEM[index];
-        minIndex = index;
-      }
-    }
-    ALLITEM[minIndex] = ALLITEM[startIt];
-    ALLITEM[startIt] = minValue;
-    temPr = ALLPRICE[minIndex];
-    ALLPRICE[minIndex] = ALLPRICE[startIt];
-    ALLPRICE[startIt] = temPr;
-  }
-//End sorting
-/////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////
-//Finding item
-  int first =0,
-      last = ALLITEM.size()-1,
-      middle,
-      position = -1;
-      bool find = false;
-  while(!find && first<=last)
-  {
-    middle = (first+last) / 2;
-    if(ALLITEM[middle] == item)
-    {
-      find = true;
-      position = middle;
-    }
-    else if(ALLITEM[middle] > item)
-      last = middle-1;
-    else
-      first = middle+1;
-  }
-  return find;
-}
-
-/////////////////Function for search item and add it to order
-void AddItem(string item, int number)
-{
-////////////////////////////////////////////////////////
-//find the position search item in the 2-D array
-  int row, col;
-  for(int rw=0; rw<ROW; rw++)
-    for(int cl=0; cl<COL; cl++)
-    {
-      if(item == itemName[rw][cl])
-      {
-        row = rw;
-        col = cl;
-      }
-    }
-//End Finding
-////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////
-//ADD order 
-	numberOfOrder[row][col] += number;
-	commulateTotal += number * itemPrice[row][col];
 }
