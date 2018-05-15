@@ -20,8 +20,10 @@ void displayReceipt();
 void createRecipt(const string[][COL], const double[][COL], const int[][COL]);
 void timeStamp();
 void saveDataInFile();
-bool SearchItem(string);
-void AddItem(string , int );
+bool SearchItem(string, vector<string>, vector<double>);
+int* FindingItemPostition(string);
+double* FindingPricePosition(string);
+void displayAllItem(vector<string>, vector<double>);
 
 ////////////////////////////////////////////
 ///////////////ARRAY FOR ITEM///////////////
@@ -40,7 +42,8 @@ string itemName[ROW][COL]={{ "Bacon Sandwich","Bistro Box","Turkey Burger" },
  double itemPrice[ROW][COL]={{ 4.5, 5.5, 4.5 },
                             { 3.5, 4.5, 5.0 },
                             { 5.0, 10.0, 15.0 }
-                            }     ;
+                            } ;
+                            
 int numberOfOrder[ROW][COL];
 double commulateTotal = 0;
 static int itemCounter = 0;
@@ -51,6 +54,19 @@ const double TAX = 0.085;
 
 int main()
 {
+////////////////////////////////////////////////////////////////
+///Add vector to save all item and it price for sort using//////
+////////////////////////////////////////////////////////////////
+  vector<string> ALLITEM;
+  for(int row=0; row<ROW; row++)
+    for(int col=0; col<COL; col++)
+      ALLITEM.push_back(itemName[row][col]);
+  vector<double> ALLPRICE;
+  for(int row=0; row<ROW; row++)
+    for(int col=0; col<COL; col++)
+      ALLPRICE.push_back(itemPrice[row][col]);
+//                                                            End
+//////////////////////////////////////////////////////////////////
 	//variable that User enter
 	int UserInput;
 
@@ -199,7 +215,7 @@ int main()
 				} while (UserInput < 4);
 
 				break;
-			/////////////////////Display all menu/////////////////////////////
+			/////////////////////Search Item/////////////////////////////
 			case 4:
 			  //Get User input
         string itemSearch;
@@ -207,21 +223,29 @@ int main()
         cout << "Enter the item you want to search: ";
         cin.ignore();
         getline(cin, itemSearch);
-			  found = SearchItem(itemSearch);
+			  found = SearchItem(itemSearch, ALLITEM, ALLPRICE);
 			  if(found == false)
 			  {
-			    cout << "Sorry, the item was not found." << endl;
-			    cout << "Enter anything to turn back.";
+			    cout << "Sorry, the item was not found. The menu is below. " ;
+			    cout << "Enter anything to turn back." << endl;;
+			    displayAllItem(ALLITEM, ALLPRICE);
 			    cin.ignore();
 			    break;
 			  }
 			   else
 			   {
+			     int* iprItem;    /////point to save the search item order number address
+			     double* iprPrice;    /////point to save the search item price address
 			     cout << "How many you want: ";
 			     cin >> numberWanted;
 			     numberWanted = inputQuantityValidate(numberWanted);
 			     /////***Add the number to the numberOfOrder****/////
-			     AddItem(itemSearch, numberWanted);
+			     iprItem = FindingItemPostition(itemSearch);
+			     iprPrice = FindingPricePosition(itemSearch);
+            ////////////////////////////////////////////////////////
+            //ADD numbers of order to numberOfOrder and add total. 
+          	*iprItem += numberWanted;
+          	commulateTotal += numberWanted * (*iprPrice);
 			   }
 			 
 			///////////////////Otherwise  ////////////////////////////////////
@@ -235,9 +259,9 @@ int main()
 }
 
 
-//////////////////////////////////////////////////////////////
-/////////////////////Display Menu Function///////////////////
-////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////
+      /////////////////////Display Menu Function///////////////////
+      ////////////////////////////////////////////////////////////
 void displayMenu()
 {
 	ClearScreen();
@@ -278,8 +302,9 @@ void displayGiftCard()
 	displayMenueOrder(itemName, itemPrice, 2);
 }
 
-
-//////////////////Function that pass item name and and price to display item information
+      //////////////////////////////////////////////////////////////////////////
+      //////////////////Function that pass item name and and price to display item information
+      //////////////////////////////////////////////////////////////////////////
 void displayMenueOrder(const string item[][COL], const double price[][COL], int row)
 {
 
@@ -292,7 +317,10 @@ void displayMenueOrder(const string item[][COL], const double price[][COL], int 
 	cout << "5.End order" << endl;
 	cout << "choice:";
 }
-//////////////////Function that check input form 1~5:
+
+      //////////////////////////////////////////////////////////////////////////
+      //////////////////Function that check input form 1~5/////////////////////
+      //////////////////////////////////////////////////////////////////////////
 int inputValidate(int input)
 {
 	while (input <1 || input >5)
@@ -302,7 +330,10 @@ int inputValidate(int input)
 	}
 	return input;
 }
-//////////////////Function that check input quantity, should greater than0
+
+      ///////////////////////////////////////////////////////////////////////////////////
+      //////////////////Function that check input quantity//////////////////////////////
+      ////////////////////////////////////////////////////////////////////should greater than0
 int inputQuantityValidate(int qt)
 {
 	while (qt <= 0)
@@ -313,7 +344,9 @@ int inputQuantityValidate(int qt)
 	return qt;
 }
 
-//////////////////Function that creates Receipt
+      ////////////////////////////////////////////////////////////////////
+      //////////////Function that creates Receipt/////////////////////////
+      ////////////////////////////////////////////////////////////////////
 void createRecipt(const string menu[][COL], const double price[][COL], const int quanty[][COL])
 {
 	//create vector to hold data
@@ -333,9 +366,11 @@ void createRecipt(const string menu[][COL], const double price[][COL], const int
         }
     }
 }
-/////////////////Function that display Receipt
-/////////////////Save File in this function.
-/////////////////			Because After this function, program end
+      ////////////////////////////////////////////////////////////
+      /////////////////Function that display Receipt/////////////
+      ////////////////////////////////////////////////////////////
+                                /////////////////Save File in this function.
+                                /////////////////			Because After this function, program end
 void displayReceipt()
 {
 	ClearScreen();
@@ -354,13 +389,17 @@ void displayReceipt()
 	saveDataInFile();
 }
 
-//////////////////Function clear the screen when user make choice
+      /////////////////////////////////////////////////////////
+      //////////////////Function clear the screen//////////////
+      /////////////////////////////////////////////////////////
 void ClearScreen()
 {
 	system("cls");
 
 }
-/////////////////Function display date
+      ////////////////////////////////////////////////////////////
+      /////////////////Function display date/////////////////////
+      ////////////////////////////////////////////////////////////
 void timeStamp()
 {
 	// current date/time based on current system
@@ -371,10 +410,12 @@ void timeStamp()
 
 	cout << dt << endl;
 }
-/////////////////Function Save data in file
-////Write item name and it quantity sold and daily earn
-////ROW present FOOD, DRINK, AND GIFT-CARD
-////COL present different item in FOOD, DRINK, AND GIFT-CARD
+      ////////////////////////////////////////////////////////////
+      /////////////////Function Save data in file////////////////
+      ////////////////////////////////////////////////////////////
+                              ////Write item name and it quantity sold and daily earn
+                              ////ROW present FOOD, DRINK, AND GIFT-CARD
+                              ////COL present different item in FOOD, DRINK, AND GIFT-CARD
 void saveDataInFile()
 {
 	time_t now = time(0);
@@ -403,77 +444,67 @@ void saveDataInFile()
 
 	outputFile.close();
 }
-
-/////////////Function display all menu
-bool SearchItem(string item)
+      ////////////////////////////////////////////////////////////
+      /////////////Function display all menu/////////////////////
+      ////////////////////////////////////////////////////////////
+bool SearchItem(string item, vector<string> allItem, vector<double> price)
 {
-////////////////////////////////////////////////////////////////
-///Add vector to save all item and it price for sort using
-  vector<string> ALLITEM;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLITEM.push_back(itemName[row][col]);
-  vector<double> ALLPRICE;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLPRICE.push_back(itemPrice[row][col]);
-//End
-//////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////
-//sort ALLITEM and ALLPRICE in accending way
+  /////////////////////////////////////////////////////////////////
+  //sort ALLITEM and ALLPRICE in accending way
   int startIt, minIndex;
   string minValue;
   double temPr;
-  for(startIt=0; startIt<(ALLITEM.size()-1); startIt++)
+  for(startIt=0; startIt<(allItem.size()-1); startIt++)
   {
     minIndex = startIt;
-    minValue = ALLITEM[startIt];
-    for(int index=startIt+1; index<(ALLITEM.size()); index++)
+    minValue = allItem[startIt];
+    for(int index=startIt+1; index<(allItem.size()); index++)
     {
-      if(ALLITEM[index]<minValue)
+      if(allItem[index]<minValue)
       {
-        minValue = ALLITEM[index];
+        minValue = allItem[index];
         minIndex = index;
       }
     }
-    ALLITEM[minIndex] = ALLITEM[startIt];
-    ALLITEM[startIt] = minValue;
-    temPr = ALLPRICE[minIndex];
-    ALLPRICE[minIndex] = ALLPRICE[startIt];
-    ALLPRICE[startIt] = temPr;
+    allItem[minIndex] = allItem[startIt];
+    allItem[startIt] = minValue;
+    temPr = price[minIndex];
+    price[minIndex] = price[startIt];
+    price[startIt] = temPr;
   }
-//End sorting
-/////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////
-//Finding item
+  //End sorting
+  /////////////////////////////////////////////////////////////
+  
+  /////////////////////////////////////////////////
+  //Finding item
   int first =0,
-      last = ALLITEM.size()-1,
+      last = allItem.size()-1,
       middle,
       position = -1;
       bool find = false;
   while(!find && first<=last)
   {
     middle = (first+last) / 2;
-    if(ALLITEM[middle] == item)
+    if(allItem[middle] == item)
     {
       find = true;
       position = middle;
     }
-    else if(ALLITEM[middle] > item)
+    else if(allItem[middle] > item)
       last = middle-1;
     else
       first = middle+1;
   }
   return find;
 }
-
-/////////////////Function for search item and add it to order
-void AddItem(string item, int number)
+      //////////////////////////////////////////////////////////////////////
+      /////////////////Function find the item's order address///////////////
+      //////////////////////////////////////////////////////////////////////
+int* FindingItemPostition(string item)
 {
-////////////////////////////////////////////////////////
-//find the position search item in the 2-D array
+  int* ptr;
+  ////////////////////////////////////////////////////////
+  //find the position search item in the 2-D array
   int row, col;
   for(int rw=0; rw<ROW; rw++)
     for(int cl=0; cl<COL; cl++)
@@ -484,11 +515,44 @@ void AddItem(string item, int number)
         col = cl;
       }
     }
-//End Finding
-////////////////////////////////////////////////////////
+  //End Finding
+  ////////////////////////////////////////////////////////
+  ptr = &numberOfOrder[row][col];
+  return ptr;
+}
 
-////////////////////////////////////////////////////////
-//ADD order 
-	numberOfOrder[row][col] += number;
-	commulateTotal += number * itemPrice[row][col];
+      ////////////////////////////////////////////////////////////////
+      /////////////////Function find the item's price address/////////
+      ////////////////////////////////////////////////////////////////
+double* FindingPricePosition(string item)
+{
+  double* ptr;
+  ////////////////////////////////////////////////////////
+  //find the position search item in the 2-D array
+  int row, col;
+  for(int rw=0; rw<ROW; rw++)
+    for(int cl=0; cl<COL; cl++)
+    {
+      if(item == itemName[rw][cl])
+      {
+        row = rw;
+        col = cl;
+      }
+    }
+  //End Finding
+  ////////////////////////////////////////////////////////
+  ptr = &itemPrice[row][col];
+  return ptr;
+}
+
+      //////////////////////////////////////////////////////////////
+      /////////////////Function display all menu //////////////////
+      ////////////////////////////////////////////////////////////
+void displayAllItem(vector<string> item, vector<double> price)
+{
+  cout << setw(20) << left << "ITEM" << "\t\t\t\t\t\tPRICE" << endl;
+	for(int i=0; i<item.size(); i++)
+	{
+		cout << (i + 1) << "." << setw(21) << left << item[i] << "\t\t\t\t\t\t$" << price[i] << endl;
+  }
 }
