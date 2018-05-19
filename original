@@ -45,8 +45,8 @@ string itemName[ROW][COL]={{ "Bacon Sandwich","Bistro Box","Turkey Burger" },
                             { 3.5, 4.5, 5.0 },
                             { 5.0, 10.0, 15.0 }
                             } ;
-                            
-unique_ptr<int [][COL]> numberOfOrder(new int[ROW][COL]);
+
+unique_ptr<int [][COL]> numberOfOrder(new int[ROW][COL]());
 double commulateTotal = 0;
 static int itemCounter = 0;
 ////////////////////////////////////
@@ -61,56 +61,47 @@ const double TAX = 0.085;
   ///////////////////////////////////////////////////////////
 int main()
 {
-  ///////////////////////////////////////////////////////////////////
-  //Add vector to save all item and it price for sort using
-  vector<string> ALLITEM;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLITEM.push_back(itemName[row][col]);
-  vector<double> ALLPRICE;
-  for(int row=0; row<ROW; row++)
-    for(int col=0; col<COL; col++)
-      ALLPRICE.push_back(itemPrice[row][col]);
+
   //                                                            End
   //////////////////////////////////////////////////////////////////
-  
+
   /////////////////////////////////////////////
   //Create user's name
   string user;
   string *ptr_user = &user;
   identifyUser(ptr_user);
-  //                              End 
+  //                              End
   ////////////////////////////////////////////
-  
+
   ////////////////////////////////////////////////
 	//variable that User enter
 	int UserInput;
 
-	double Total = 0.0;
+
 	int numberWanted;
 	/////////////////////////////////////////////////
 	////////////Menu start Here//////////////////
 	////////////////////////////////////////////////
-	cout << fixed << setprecision(2) << showpoint;
+
 	do
 	{
 		//////////////////Main menu//////////////////
 		displayMenu();
 		cin >> UserInput;
-		while (UserInput < 0 || UserInput > 5)
-		{
-			cout << "Sorry choice, please enter option 1~5: ";
-			cin >> UserInput;
-		}
+		//input validation
+		if(UserInput <1 || UserInput >5)
+        {
+            cin.clear();
+            cin.ignore(INT8_MAX, '\n');
+            cout << "Sorry, not that option. Please enter 1~6: ";
+            cin >> UserInput;
+            
+        }
 
-		if (UserInput == 5)
-		{
-			displayReceipt(ptr_user);
-			return 0;
-		}
+
 		/////////////////////////////////////////
 		//////////Go into Menu 1, 2, or 3///////
-		else
+
 		{
 			switch (UserInput)
 			{
@@ -120,7 +111,7 @@ int main()
 				{
 					displayFoodMenu();
 					cin >> UserInput;
-					inputValidate(UserInput);
+					UserInput = inputValidate(UserInput);
 					switch (UserInput)
 					{
 					case 1:
@@ -142,7 +133,7 @@ int main()
 						cin >> numberWanted;
 						numberWanted = inputQuantityValidate(numberWanted);
 						numberOfOrder[0][2] += numberWanted;
-						commulateTotal += numberWanted * itemPrice[0][3];
+						commulateTotal += numberWanted * itemPrice[0][2];
 						break;
 					case 4:
 						break;
@@ -159,7 +150,7 @@ int main()
 				{
 					displayDrinkMenu();
 					cin >> UserInput;
-					inputValidate(UserInput);
+					UserInput = inputValidate(UserInput);
 					switch (UserInput)
 					{
 					case 1:
@@ -198,7 +189,7 @@ int main()
 				{
 					displayGiftCard();
 					cin >> UserInput;
-					inputValidate(UserInput);
+					UserInput = inputValidate(UserInput);
 					switch (UserInput)
 					{
 					case 1:
@@ -233,44 +224,65 @@ int main()
 				break;
 			/////////////////////Search Item/////////////////////////////
 			case 4:
-			  //Get User input
-        string itemSearch;
-        bool found = false;
-        cout << "Enter the item you want to search: ";
-        cin.ignore();
-        getline(cin, itemSearch);
-			  found = SearchItem(itemSearch, ALLITEM, ALLPRICE);
-			  if(found == false)
-			  {
-			    cout << "Sorry, the item was not found. The menu is below. " ;
-			    cout << "Enter anything to turn back." << endl;;
-			    displayAllItem(ALLITEM, ALLPRICE);
-			    cin.ignore();
-			    break;
-			  }
-			   else
-			   {
-			     int* iprItem;    /////point to save the search item order number address
-			     double* iprPrice;    /////point to save the search item price address
-			     cout << "How many you want: ";
-			     cin >> numberWanted;
-			     numberWanted = inputQuantityValidate(numberWanted);
-			     /////***Add the number to the numberOfOrder****/////
-			     iprItem = FindingItemPostition(itemSearch);
-			     iprPrice = FindingPricePosition(itemSearch);
-            ////////////////////////////////////////////////////////
-            //ADD numbers of order to ptrItemOrder and add total. 
-          	*iprItem += numberWanted;
-          	commulateTotal += numberWanted * (*iprPrice);
-			   }
-			 
-			///////////////////Otherwise  ////////////////////////////////////
-			
+                {
+                     ///////////////////////////////////////////////////////////////////
+                  //Add vector to save all item and it price for sort using
+                  vector<string> ALLITEM;
+                  for(int row=0; row<ROW; row++)
+                    for(int col=0; col<COL; col++)
+                      ALLITEM.push_back(itemName[row][col]);
+                  vector<double> ALLPRICE;
+                  for(int row=0; row<ROW; row++)
+                    for(int col=0; col<COL; col++)
+                      ALLPRICE.push_back(itemPrice[row][col]);
+                    //Get User input
+                string itemSearch;
+                bool found = false;
+                cout << "Enter the item you want to search: ";
+                cin.ignore();
+                getline(cin, itemSearch);
+                      found = SearchItem(itemSearch, ALLITEM, ALLPRICE);
+                      if(found == false)
+                      {
+                        cout << "Sorry, the item was not found. The menu is below. " ;
+                        cout << "Enter anything to turn back." << endl;;
+                        displayAllItem(ALLITEM, ALLPRICE);
+                        cin.ignore();
+                        break;
+                      }
+                       else
+                       {
+                         int* iprItem;    /////point to save the search item order number address
+                         double* iprPrice;    /////point to save the search item price address
+                         cout << "How many you want: ";
+                         cin >> numberWanted;
+                         numberWanted = inputQuantityValidate(numberWanted);
+                         /////***Add the number to the numberOfOrder****/////
+                         iprItem = FindingItemPostition(itemSearch);
+                         iprPrice = FindingPricePosition(itemSearch);
+                    ////////////////////////////////////////////////////////
+                    //ADD numbers of order to ptrItemOrder and add total.
+                    *iprItem += numberWanted;
+                    commulateTotal += numberWanted * (*iprPrice);
+                       }
+                       break;
+                }
+                case 5:
+                   {
+
+
+                    if (UserInput == 5)
+                        {
+                            displayReceipt(ptr_user);
+                            return 0;
+                        }
+                   }
 			}
 		}
 
-	} while (UserInput != 0);
-
+	} while (UserInput != 6);
+    delete ptr_user;
+    ptr_user = NULL;
 	return 0;
 }
 
@@ -290,7 +302,7 @@ void displayMenu()
 	cout << "3.Gift Card" << endl;
 	cout << "4.Search Item" << endl;
 	cout << "5.Done Ordering" << endl;
-	cout << "0. Exit" << endl;
+	cout << "6. Exit" << endl;
 	cout << "choice:";
 }
 void displayFoodMenu()
@@ -339,10 +351,16 @@ void displayMenueOrder(const string item[][COL], const double price[][COL], int 
       //////////////////////////////////////////////////////////////////////////
 int inputValidate(int input)
 {
+  
 	while (input <1 || input >5)
 	{
-		cout << "Sorry, not that option. Please enter 1~5: ";
-		cin >> input;
+	    //clears users Input
+	    cin.clear();
+        cin.ignore(INT8_MAX, '\n');
+      
+       cout << "Sorry, not that option. Please enter 1~5: ";
+       cin >> input;
+        
 	}
 	return input;
 }
@@ -354,6 +372,9 @@ int inputQuantityValidate(int qt)
 {
 	while (qt <= 0)
 	{
+	    //clears users Input
+	    cin.clear();
+        cin.ignore(INT8_MAX, '\n');
 		cout << "Sorry, quantity cannot be negative, please reenter: ";
 		cin >> qt;
 	}
@@ -375,7 +396,7 @@ void createRecipt(const string menu[][COL], const double price[][COL],unique_ptr
             if (quanty[row][col] != 0)
 		{
 			itemCounter += 1;
-			cout << (itemCounter) << "." << setw(21) << left << menu[row][col] << "                 " << quanty[row][col] << "\t\t\t$" << price[row][col] * quanty[row][col] << endl;
+			cout << (itemCounter) << "." << setw(21) << left << menu[row][col] << "                 " << quanty[row][col] << "\t\t$"<< fixed << setprecision(2) << price[row][col] * quanty[row][col] << endl;
 
 		}
         }
@@ -392,10 +413,10 @@ void displayReceipt(string *Puser)
 	cout << "Casher:  " << *Puser<< "\t\t";
 	timeStamp();
 	cout << setw(20) << left << "ITEM" << "                 " << "QTY" << "\t\t\tPRICE" << endl;
-	cout << "------------------------------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------------------------" << endl;
 	createRecipt(itemName, itemPrice, numberOfOrder );
 	cout << endl;
-	cout << "------------------------------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------------------------" << endl;
 	cout << "                                                   "<< setw(15) << right << "Sub-total: $" << commulateTotal << endl;
 	cout << "                                                          "<< setw(15) << right <<" TAX:8.5%" << endl;
 	cout << "                                                   "<< setw(15) << right << " + $" << commulateTotal * TAX << endl;
@@ -437,23 +458,23 @@ void saveDataInFile(string *Puser)
 	char* dt = ctime(&now);
 	ofstream outputFile;
 	outputFile.open("Data.txt");
-	outputFile << "Casher:" << *Puser << "\t\t";
+	outputFile << "Casher:" << *Puser << "\t\t\t\t\t\t";
 	outputFile << dt << endl;
-	outputFile << "ITEM"<< setw(30)<<" \t\t\tquantity" << endl;
-	outputFile << "------------------------------------------------------" << endl;
+	outputFile << "ITEM"<< setw(30)<<" \t\t\tquantity" << "\t\t\tPRICE"  << endl;
+	outputFile << "-------------------------------------------------------------------------------------" << endl;
 	for (int row = 0; row<ROW; row++)
 	{
 		for (int col = 0; col<COL; col++)
 		{
 			if (numberOfOrder[row][col] != 0)
-					outputFile << setw(30) << left << itemName[row][col] << "\t\t\t" << numberOfOrder[row][col] << endl;
+					outputFile << setw(30) << left << itemName[row][col] << "\t\t\t" << numberOfOrder[row][col] <<"\t\t\t$" << fixed <<setprecision(2) <<(itemPrice[row][col] * numberOfOrder[row][col]) << endl;
 
 		}
 	}
-	outputFile << "------------------------------------------------------" << endl;
-	outputFile << "                                   "<< setw(15) << right << "Sub-total: $" << commulateTotal << endl;
-	outputFile << "                                      "<< setw(15) << right <<" TAX:8.5%" << endl;
-	outputFile << fixed <<setprecision(2) <<   "                                  "<< setw(15) << right << " + $" << commulateTotal * TAX << endl;
+	outputFile << "-------------------------------------------------------------------------------------" << endl;
+	outputFile << "                                   "<< setw(20) << right << "Sub-total: $" << commulateTotal << endl;
+	outputFile << "                                      "<< setw(20) << right <<" TAX:8.5%" << endl;
+	outputFile << fixed <<setprecision(2) <<   "                                  "<< setw(20) << right << " + $" << commulateTotal * TAX << endl;
 	outputFile << fixed <<setprecision(2) << "Today's total sell is $ " << commulateTotal * (1 + TAX)  << endl;
 	outputFile.open("Data.txt");
 
@@ -489,7 +510,7 @@ bool SearchItem(string item, vector<string> allItem, vector<double> price)
   }
   //End sorting
   /////////////////////////////////////////////////////////////
-  
+
   /////////////////////////////////////////////////
   //Finding item
   int first =0,
@@ -578,4 +599,6 @@ void identifyUser(string *Puser)
 {
   cout << "Please Enter User Name:";
   cin >> *Puser;
+  cin.clear();
+cin.ignore(INT8_MAX, '\n');
 }
